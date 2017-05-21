@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 
 import it.polito.tdp.porto.model.Author;
 import it.polito.tdp.porto.model.Paper;
@@ -64,5 +67,32 @@ public class PortoDAO {
 			 e.printStackTrace();
 			throw new RuntimeException("Errore Db");
 		}
+	}
+
+	public List<Author> getAllAuthor() {
+		
+		final String sql = "SELECT * FROM author ORDER BY lastname ASC";
+		
+		List<Author> autori = new ArrayList<Author>();
+
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+				Author autore = new Author(rs.getInt("id"), rs.getString("lastname"), rs.getString("firstname"));
+				autori.add(autore);
+			}
+
+			st.close();
+			conn.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Errore di connessione al Database.");
+		}
+
+		return autori;
 	}
 }
